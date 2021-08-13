@@ -23,9 +23,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         selectbtn1.setOnClickListener {
-            val builder = AlertDialog.Builder(this@MainActivity)
-            val dialogView = layoutInflater.inflate(R.layout.popup_list1, null)
-            builder.setView(dialogView).show()
+//            val dialog = popup_list1(this)
+//            dialog.mydig()
+            val dialog = popup_list1()
+            dialog.show(supportFragmentManager, "test")
         }
         firestore = FirebaseFirestore.getInstance()
 
