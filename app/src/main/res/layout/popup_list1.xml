@@ -10,9 +10,10 @@
         android:orientation="vertical">
 
         <TextView
+            android:background="#919090"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="시-도"
+            android:text="세부 구역"
             android:textStyle="bold"
             android:textSize="30dp"
             android:layout_width="match_parent"

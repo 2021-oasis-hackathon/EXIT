@@ -1,15 +1,20 @@
 package com.example.exit_saferoute
 
 import android.app.Dialog
+import android.app.job.JobWorkItem
 import android.content.Context
+import android.content.Intent
 import android.graphics.Point
 import android.media.JetPlayer
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.appcompat.view.menu.MenuBuilder
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +24,7 @@ import kotlinx.android.synthetic.main.popup_item.view.*
 class popup_list1 : DialogFragment() {
     val testlist = ArrayList<popup_item1>()
     lateinit var recyclerView1: RecyclerView
+
 
     override fun onResume() {
         super.onResume()
@@ -36,13 +42,74 @@ class popup_list1 : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val args: Bundle? = arguments
+        val argsValue: String? = args!!.getString("hn")
         var rootView = inflater.inflate(R.layout.popup_list1, container, false)
-        for (i in 0 until 10) {
-            testlist.add(popup_item1("test" + i))
+
+        if (argsValue == "1"){
+            testlist.add(popup_item1("북구"))
+            testlist.add(popup_item1("서구"))
+            testlist.add(popup_item1("남구"))
+            testlist.add(popup_item1("동구"))
+            testlist.add(popup_item1("광산구"))
         }
+
+        else if (argsValue == "2") {
+            testlist.add(popup_item1("목포시"))
+            testlist.add(popup_item1("여수시"))
+            testlist.add(popup_item1("순천시"))
+            testlist.add(popup_item1("나주시"))
+            testlist.add(popup_item1("광양시"))
+            testlist.add(popup_item1("담양군"))
+            testlist.add(popup_item1("곡성군"))
+            testlist.add(popup_item1("구례군"))
+            testlist.add(popup_item1("고흥군"))
+            testlist.add(popup_item1("보성군"))
+            testlist.add(popup_item1("화순군"))
+            testlist.add(popup_item1("장흥군"))
+            testlist.add(popup_item1("강진군"))
+            testlist.add(popup_item1("해남군"))
+            testlist.add(popup_item1("영암군"))
+            testlist.add(popup_item1("무안군"))
+            testlist.add(popup_item1("함평군"))
+            testlist.add(popup_item1("영광군"))
+            testlist.add(popup_item1("장성군"))
+            testlist.add(popup_item1("완도군"))
+            testlist.add(popup_item1("진도군"))
+            testlist.add(popup_item1("신안군"))
+        }
+        else if (argsValue == "3") {
+            testlist.add(popup_item1("전주시 완산구"))
+            testlist.add(popup_item1("전주시 덕진구"))
+            testlist.add(popup_item1("군산시"))
+            testlist.add(popup_item1("익산시"))
+            testlist.add(popup_item1("정읍시"))
+            testlist.add(popup_item1("남원시"))
+            testlist.add(popup_item1("김제시"))
+            testlist.add(popup_item1("완주군"))
+            testlist.add(popup_item1("진안군"))
+            testlist.add(popup_item1("무주군"))
+            testlist.add(popup_item1("장수군"))
+            testlist.add(popup_item1("임실군"))
+            testlist.add(popup_item1("순창군"))
+            testlist.add(popup_item1("고창군"))
+            testlist.add(popup_item1("부안군"))
+        }
+
+        val adapter = popupadapter(requireContext(), testlist)
         recyclerView1 = rootView.findViewById(R.id.citylist1!!) as RecyclerView
         recyclerView1.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView1.adapter = popupadapter(requireContext(), testlist)
+        recyclerView1.adapter = adapter
+        adapter.setItemClickListener(object: OnItemClickListener{
+            override fun onClick(v: View, position: Int) {
+                val item = testlist
+//                Toast.makeText(v.context, "${item[position].name}", Toast.LENGTH_SHORT).show()
+                val itnt = Intent(activity, MainActivity::class.java)
+                itnt.putExtra("name", item[position].name)
+                startActivity(itnt)
+                adapter.notifyDataSetChanged()
+            }
+        })
         return rootView
     }
 
@@ -102,11 +169,17 @@ class popupadapter(val context: Context, val itemlist: ArrayList<popup_item1>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val viewHolder = (holder as ViewHolder).itemView
-
+        holder.itemView.setOnClickListener {
+            itemClickListener.onClick(it, position)
+        }
         viewHolder.popuptext.text = itemlist[position].name
 
     }
+    private lateinit var itemClickListener : OnItemClickListener
 
+    fun setItemClickListener(itemClickListener: OnItemClickListener) {
+        this.itemClickListener = itemClickListener
+    }
     override fun getItemCount(): Int {
         return itemlist.size
     }

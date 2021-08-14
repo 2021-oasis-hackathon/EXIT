@@ -3,6 +3,7 @@ package com.example.exit_saferoute
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.renderscript.ScriptGroup
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,19 +16,17 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item.view.*
+import java.security.PublicKey
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     var firestore : FirebaseFirestore? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        selectbtn1.setOnClickListener {
-//            val dialog = popup_list1(this)
-//            dialog.mydig()
-            val dialog = popup_list1()
-            dialog.show(supportFragmentManager, "test")
-        }
+        var itnt = intent
+        val dName: String? = itnt.getStringExtra("name")
         firestore = FirebaseFirestore.getInstance()
 
         val adapter1 = RecyclerViewAdapter()
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         adapter1.setItemClickListener(object : OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 val item = adapter1.testroute
-                Toast.makeText(v.context, "test", Toast.LENGTH_SHORT).show()
+                Toast.makeText(v.context, "${item[position].name} ${item[position].address}", Toast.LENGTH_SHORT).show()
                 adapter1.notifyDataSetChanged()
             }
         })
@@ -48,7 +47,9 @@ class MainActivity : AppCompatActivity() {
         var testroute : ArrayList<ItemForList> = arrayListOf()
 
         init {  // testroute의 문서를 불러온 뒤 ItemForList로 변환해 ArrayList에 담음
-            firestore?.collection("saferoute")?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+            var itnt = intent
+            val dName: String? = itnt.getStringExtra("name")
+            firestore?.collection(dName!!)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 // ArrayList 비워줌
                 testroute.clear()
 
