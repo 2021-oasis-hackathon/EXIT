@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".initialActivity">
+    tools:context=".InitialActivity">
 
     <Button
+        android:layout_marginTop="50dp"
         android:layout_gravity="center"
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="서버 연결"/>
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:text="서버 연결"
+        android:textSize="30dp"/>
 
 </LinearLayout>

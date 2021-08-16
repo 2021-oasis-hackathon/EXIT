@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:background="#919090"
+            android:background="@drawable/edge"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="세부 구역"

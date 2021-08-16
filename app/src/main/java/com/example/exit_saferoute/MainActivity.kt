@@ -1,26 +1,24 @@
 package com.example.exit_saferoute
 
+
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.renderscript.ScriptGroup
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.tabs.TabLayout
+
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item.view.*
-import java.security.PublicKey
-import kotlin.math.log
+
 
 class MainActivity : AppCompatActivity() {
-    var firestore : FirebaseFirestore? = null
+    var firestore: FirebaseFirestore? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,31 +32,36 @@ class MainActivity : AppCompatActivity() {
         adapter1.setItemClickListener(object : OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 val item = adapter1.testroute
-                Toast.makeText(v.context, "${item[position].name} ${item[position].address}", Toast.LENGTH_SHORT).show()
+                val itnt = Intent(this@MainActivity, MapTest::class.java)
+                itnt.putExtra("position", item[position].address)
+                //Toast.makeText(v.context, "${item[position].name} ${item[position].address}", Toast.LENGTH_SHORT).show()
                 adapter1.notifyDataSetChanged()
+                startActivity(itnt)
             }
         })
         recyclerview.adapter = adapter1
         recyclerview.layoutManager = LinearLayoutManager(this@MainActivity)
 
     }
+
     inner class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         //  ArrayList 생성성
-        var testroute : ArrayList<ItemForList> = arrayListOf()
+        var testroute: ArrayList<ItemForList> = arrayListOf()
 
         init {  // testroute의 문서를 불러온 뒤 ItemForList로 변환해 ArrayList에 담음
             var itnt = intent
             val dName: String? = itnt.getStringExtra("name")
-            firestore?.collection(dName!!)?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                // ArrayList 비워줌
-                testroute.clear()
+            firestore?.collection(dName!!)
+                ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    // ArrayList 비워줌
+                    testroute.clear()
 
-                for (snapshot in querySnapshot!!.documents) {
-                    var item = snapshot.toObject(ItemForList::class.java)
-                    testroute.add(item!!)
+                    for (snapshot in querySnapshot!!.documents) {
+                        var item = snapshot.toObject(ItemForList::class.java)
+                        testroute.add(item!!)
+                    }
+                    notifyDataSetChanged()
                 }
-                notifyDataSetChanged()
-            }
         }
 
         // xml파일을 inflate하여 ViewHolder를 생성
@@ -81,17 +84,20 @@ class MainActivity : AppCompatActivity() {
                 itemClickListener.onClick(it, position)
             }
         }
-        private lateinit var itemClickListener : OnItemClickListener
+
+        private lateinit var itemClickListener: OnItemClickListener
 
         fun setItemClickListener(itemClickListener: OnItemClickListener) {
             this.itemClickListener = itemClickListener
         }
+
         // 리사이클러뷰의 아이템 총 개수 반환
         override fun getItemCount(): Int {
             return testroute.size
         }
     }
 }
+
 interface OnItemClickListener {
     fun onClick(v: View, position: Int)
 }
