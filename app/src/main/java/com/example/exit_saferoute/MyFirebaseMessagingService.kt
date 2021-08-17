@@ -79,7 +79,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if(messageBody["clickaction"] == "EmergencyMap") {
             intent = Intent(this, EmergencyMap::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intent.putExtra("position", "광주광역시 북구")
+            intent.putExtra("position", messageBody["title"])
 
         }
         else{

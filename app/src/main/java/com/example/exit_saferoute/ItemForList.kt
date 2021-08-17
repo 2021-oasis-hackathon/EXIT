@@ -1,6 +1,6 @@
 package com.example.exit_saferoute
 
 data class ItemForList(
-    var address: String? = null,
-    var name: String? = null,
+    var 신주소: String? = null,
+    var 명칭: String? = null,
 )

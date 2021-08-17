@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(v: View, position: Int) {
                 val item = adapter1.testroute
                 val itnt = Intent(this@MainActivity, MapTest::class.java)
-                itnt.putExtra("position", item[position].address)
+                itnt.putExtra("position", item[position].신주소)
                 //Toast.makeText(v.context, "${item[position].name} ${item[position].address}", Toast.LENGTH_SHORT).show()
                 adapter1.notifyDataSetChanged()
                 startActivity(itnt)
@@ -77,8 +77,8 @@ class MainActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             var viewHolder = (holder as ViewHolder).itemView
 
-            viewHolder.name.text = testroute[position].name
-            viewHolder.address.text = testroute[position].address
+            viewHolder.name.text = testroute[position].명칭
+            viewHolder.address.text = testroute[position].신주소
 
             holder.itemView.setOnClickListener {
                 itemClickListener.onClick(it, position)
