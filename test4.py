@@ -7,6 +7,33 @@ from bs4 import BeautifulSoup, BeautifulStoneSoup
 from selenium.webdriver.support.ui import Select
 from pyfcm import FCMNotification
 import time
+def server():
+ 
+    APIKEY = "AAAAX1qnZgA:APA91bG7E7RRdVWZjPh7EEsDMtMeKub5Jparo9x0UUY-Tzug8Z0lMk201DFan70MjPxfbOi1cQWOUWbbEcFFYEL5CqKB5XwJd8EbVwnPEDRQnwzRcZmTmHC9ShIHTC-rKdNogG5dT8AA"
+    TOKEN = "e1PxtLrCS7q3UQ73O7Pdyg:APA91bGV_LlNDVBE3tQvYpB2w3WjibpDO15DsaPjENc_3_snJ5PlQDytNriNbNGdbNxHNKYMF8IzgYWFujiI_QP6Pg2qyzTlL8oVp_2OtMqlz3gSsP5vYwXl2-RvYPh_s3FeW6YFPpMl"
+    
+    # 파이어베이스 콘솔에서 얻어 온 서버 키를 넣어 줌
+    push_service = FCMNotification(APIKEY)
+    
+    def sendMessage(title,message,clickAction):
+        # 메시지 (data 타입)
+        data_message = {
+            "title": title,
+            "message": message,
+            "clickAction":clickAction
+        }
+        # 토큰값을 이용해 1명에게 푸시알림을 전송함
+        result = push_service.single_device_data_message(registration_id=TOKEN, data_message=data_message)
+    
+        # 전송 결과 출력
+        print(result) #확인용 삭제
+    f1=open("locate.txt",'r')
+    title1=f1.readline()
+    f1.close()
+    f2=open("situ.txt",'r')
+    message1=f2.readline()
+    f2.close()
+    sendMessage(title1,message1,"EmergencyMap") 
 
 def where():
     gmaps = googlemaps.Client(key='AIzaSyC3a8Nl31LCuwBbtXzzYazsz36MhTywyE4')
@@ -70,8 +97,6 @@ def apppre():
     f2.write(number+'\n')
     f2.write(locate)
     f2.close()
-    driver.implicitly_wait(5)
-
     driver.quit() 
 
 def app():
@@ -147,9 +172,17 @@ def app():
                 postcontents.append(table2.text) #확인용 삭제
                 print(postcontents[i]) #확인용 - 삭제
                 if '확진' in table2.text:
-                    f3=open("situ.txt",'w')
-                    f3.write('확진') #수정필요
-                    f3.close 
+                    server()
+                elif '지진' in table2.text:
+                    server()
+                elif '태풍' in table2.text:
+                    server()
+                elif '산불' in table2.text:
+                    server()
+                elif '공습' in table2.text:
+                    server()
+                elif '전쟁' in table2.text:
+                    server()
                 else:
                     print("확진없음") #확인용-삭제
                 click2=driver.find_element_by_class_name('list_btn')
@@ -158,52 +191,20 @@ def app():
     f2.write(str(A[0]))
     f2.close()
     # 가장 최근에 올라온 게시글의 번호 저장 및 게시글 저장
-
-    driver.implicitly_wait(5) 
-
     driver.quit() 
-
-def server():
- 
-    APIKEY = "AAAAX1qnZgA:APA91bG7E7RRdVWZjPh7EEsDMtMeKub5Jparo9x0UUY-Tzug8Z0lMk201DFan70MjPxfbOi1cQWOUWbbEcFFYEL5CqKB5XwJd8EbVwnPEDRQnwzRcZmTmHC9ShIHTC-rKdNogG5dT8AA"
-    TOKEN = "e1PxtLrCS7q3UQ73O7Pdyg:APA91bGV_LlNDVBE3tQvYpB2w3WjibpDO15DsaPjENc_3_snJ5PlQDytNriNbNGdbNxHNKYMF8IzgYWFujiI_QP6Pg2qyzTlL8oVp_2OtMqlz3gSsP5vYwXl2-RvYPh_s3FeW6YFPpMl"
-    
-    # 파이어베이스 콘솔에서 얻어 온 서버 키를 넣어 줌
-    push_service = FCMNotification(APIKEY)
-    
-    def sendMessage(title,message,clickAction):
-        # 메시지 (data 타입)
-        data_message = {
-            "title": title,
-            "message": message,
-            "clickAction":clickAction
-        }
-        # 토큰값을 이용해 1명에게 푸시알림을 전송함
-        result = push_service.single_device_data_message(registration_id=TOKEN, data_message=data_message)
-    
-        # 전송 결과 출력
-        print(result)
-    f1=open("locate.txt",'r')
-    title1=f1.readline()
-    f1.close()
-    f2=open("situ.txt",'r')
-    message1=f2.readline()
-    f2.close()
-    sendMessage(title1,message1,"EmergencyMap") 
-    
-where()
-print("1번째실행")
-apppre()
-print("2번째실행")
-app()
-print("3번째")
-server()
-print("4번째")
-print("?%")
+where() # 삭제
+print("1번째실행") # 삭제
+apppre() # 삭제
+print("2번째실행") # 삭제
+app() # 삭제
+print("3번째") # 삭제 
+#server() # 삭제
+print("4번째") # 삭제
+print("?%") # 삭제
 
 schedule.every(30).minutes.do(where)
 schedule.every(30).minutes.do(apppre)
-schedule.every(10).minutes.do(app)
+schedule.every(5).minutes.do(app)
 
 while True:
     schedule.run_pending()
