@@ -1,24 +1,14 @@
 package com.example.exit_saferoute
 
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
+
 import android.graphics.Color
 import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.protobuf.DescriptorProtos
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -29,11 +19,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
-import kotlin.math.log
+
 
 
 class EmergencyMap : AppCompatActivity(), OnMapReadyCallback {
@@ -93,8 +82,6 @@ class EmergencyMap : AppCompatActivity(), OnMapReadyCallback {
         val geocoder = Geocoder(this@EmergencyMap, Locale.KOREAN)
         val results = geocoder.getFromLocationName("광주광역시 북구 중앙동(누문동 115)", 1)
         val latlng = LatLng(results[0].latitude, results[0].longitude)
-
-
 
         this.naverMap = naverMap
 
