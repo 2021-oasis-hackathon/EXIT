@@ -105,10 +105,6 @@ class EmergencyMap : AppCompatActivity(), OnMapReadyCallback {
         naverMap.uiSettings.isLocationButtonEnabled = true
         CoroutineScope(Dispatchers.Main).launch {
             getData(addressName!!).await()
-            //Log.d("testD", ""+testroute[1].lat)
-
-            //Log.d("latlngtest", ""+testroute)
-
             val path = PathOverlay()
             path.color = Color.GREEN
             naverMap.addOnLocationChangeListener { location ->
