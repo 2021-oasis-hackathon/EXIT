@@ -24,6 +24,7 @@ driver.implicitly_wait(3)
 f1=open("locate.txt",'r')
 locate=f1.readline()
 f1.close
+time.sleep(2) #확인용 - 삭제
 search = driver.find_element_by_class_name('search04_input')
 search.send_keys(locate)
 
@@ -44,6 +45,7 @@ f2=open("number.txt",'w')
 f2.write(A[0]+'\n')
 f2.write(locate)
 f2.close
+
 
 driver.implicitly_wait(5)
 

@@ -44,7 +44,10 @@ for index, value in enumerate(body):
 print(A[0]) #확인용 - 삭제
 A[0]=int(A[0])  # 가장 최근에 올라온 게시글의 번호
 postcontents=[] # 게시글의 내용이 들어감 삭제
-
+print("number =",number) #확인용 - 삭제
+print(A[0]) #확인용 - 삭제 
+print(type(number))#확인용 - 삭제
+print(type(A[0])) #확인용 - 삭제
 if int(number)==A[0]:
     print("최근에 올라온 글이 없습니다.") #확인용-삭제
 else:
