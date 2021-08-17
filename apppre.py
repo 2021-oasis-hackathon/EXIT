@@ -46,7 +46,6 @@ f2.write(A[0]+'\n')
 f2.write(locate)
 f2.close
 
-
 driver.implicitly_wait(5)
 
 driver.quit() 
