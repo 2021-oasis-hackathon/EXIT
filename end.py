@@ -50,8 +50,11 @@ def where():
     B=list(reverse_geocode_result[0].values())
     print(B[1]) #확인용 삭제
     place=B[1].split() # B[1] - 풀네임 - 삭제 
-    locate=place[2]
     print(place[1])#확인용
+    if "광역시" in place[1]:
+        locate=place[1]
+    else:
+        locate=place[2]
     f1=open("locate.txt",'w')
     f1.write(locate)
     f1.close()

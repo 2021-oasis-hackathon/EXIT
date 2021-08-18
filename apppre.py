@@ -23,8 +23,7 @@ driver.implicitly_wait(3)
 
 f1=open("locate.txt",'r')
 locate=f1.readline()
-f1.close
-time.sleep(2) #확인용 - 삭제
+f1.close()
 search = driver.find_element_by_class_name('search04_input')
 search.send_keys(locate)
 
@@ -41,11 +40,11 @@ for index, value in enumerate(body):
     h=value.text
     A.append(h)
 print(A[0]) #확인용 - 삭제
+number=A[0]
 f2=open("number.txt",'w')
-f2.write(A[0]+'\n')
+f2.write(number+'\n')
 f2.write(locate)
-f2.close
-
+f2.close()
 driver.implicitly_wait(5)
 
 driver.quit() 

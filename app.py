@@ -80,7 +80,6 @@ if int(number)==A[0]:
     print("최근에 올라온 글이 없습니다.") #확인용-삭제
 else:
     print(A[0]-int(number),"개의 글이 올라왔습니다.") #확인용 -삭제
-    h=0
     if A[0]-int(number)<10:
         for i in range(A[0]-int(number)):
             postnumber='bbs_tr_'+str(i)+'_bbs_title'
@@ -89,22 +88,34 @@ else:
             table2 = driver.find_element_by_id('cn')
             print(table2.text) #확인용 - 삭제
             if '지진' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("지진상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '전쟁' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("전쟁상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '호우' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("호우상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '낙뢰' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("낙뢰상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '태풍' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("태풍상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             else:
                 pass
             click2=driver.find_element_by_class_name('list_btn')
             click2.click()
-        if h==1:
-            server()
-            print("문자메세지를 발송하였습니다.")
     else:
         print("최근 게시물 10개를 조회합니다." ) #확인용삭제
         for i in range(10):
@@ -114,21 +125,34 @@ else:
             table2 = driver.find_element_by_id('cn')
             print(table2.text) #확인용 - 삭제
             if '지진' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("지진상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '전쟁' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("전쟁상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '호우' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("호우상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '낙뢰' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("낙뢰상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             elif '태풍' in table2.text:
-                h=1
+                f3=open("situ.txt",'w')
+                f3.write("태풍상황이니 대피장소를 확인하세요")
+                f3.close()
+                server()
             else:
                 pass
             click2=driver.find_element_by_class_name('list_btn')
             click2.click()
-        if h==1:
-            server()
 f2=open("number.txt",'w')
 f2.write(str(A[0]))
 f2.close()

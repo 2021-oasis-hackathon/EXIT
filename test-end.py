@@ -50,8 +50,11 @@ def where():
     B=list(reverse_geocode_result[0].values())
     print(B[1]) #확인용 삭제
     place=B[1].split() # B[1] - 풀네임 - 삭제 
-    locate=place[2]
     print(place[1])#확인용
+    if "광역시" in place[1]:
+        locate=place[1]
+    else:
+        locate=place[2]
     f1=open("locate.txt",'w')
     f1.write(locate)
     f1.close()
@@ -94,9 +97,9 @@ def apppre():
         h=value.text
         A.append(h)
     print(A[0]) #확인용 - 삭제
-    number=A[0]
+    number=int(A[0])
     f2=open("number.txt",'w')
-    f2.write(number+'\n')
+    f2.write(str(number-1)+'\n')
     f2.write(locate)
     f2.close()
     driver.implicitly_wait(5)
@@ -150,17 +153,16 @@ def app():
     else:
         print(A[0]-int(number),"개의 글이 올라왔습니다.") #확인용 -삭제
         if A[0]-int(number)<10:
-            for i in range(1):
+            for i in range(A[0]-int(number)):
                 postnumber='bbs_tr_'+str(i)+'_bbs_title'
                 click1 = driver.find_element_by_id(postnumber) #게시글 조회
                 click1.click()
                 table2 = driver.find_element_by_id('cn')
                 print(table2.text) #확인용 - 삭제
-                if '보건' in table2.text:
+                if '지진' in table2.text:
                     f3=open("situ.txt",'w')
-                    f3.write("확진상황이니 대피장소를 확인하세요")
+                    f3.write("지진상황이니 대피장소를 확인하세요")
                     f3.close()
-                    print("서버전송전")
                     server()
                 elif '전쟁' in table2.text:
                     f3=open("situ.txt",'w')
@@ -194,9 +196,9 @@ def app():
                 click1.click()
                 table2 = driver.find_element_by_id('cn')
                 print(table2.text) #확인용 - 삭제
-                if '확진' in table2.text:
+                if '지진' in table2.text:
                     f3=open("situ.txt",'w')
-                    f3.write("확진상황이니 대피장소를 확인하세요")
+                    f3.write("지진상황이니 대피장소를 확인하세요")
                     f3.close()
                     server()
                 elif '전쟁' in table2.text:
@@ -235,13 +237,6 @@ def app():
 #   import crawl
 #except:
 #    pass
-#where()
-#apppre()
+where()
+apppre()
 app()
-schedule.every(30).minutes.do(where)
-schedule.every(30).minutes.do(apppre)
-schedule.every(5).minutes.do(app)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
