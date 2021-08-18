@@ -1,7 +1,11 @@
+import schedule
+import googlemaps
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup, BeautifulStoneSoup
 from selenium.webdriver.support.ui import Select
+from pyfcm import FCMNotification
 import time
 
 options = webdriver.ChromeOptions()
@@ -41,38 +45,62 @@ A=[] #가장 최근에 올라온 행 적는것.
 for index, value in enumerate(body):
     h=value.text
     A.append(h)
-print(A[0]) #확인용 - 삭제
 A[0]=int(A[0])  # 가장 최근에 올라온 게시글의 번호
-postcontents=[] # 게시글의 내용이 들어감 삭제
-print("number =",number) #확인용 - 삭제
-print(A[0]) #확인용 - 삭제 
-print(type(number))#확인용 - 삭제
-print(type(A[0])) #확인용 - 삭제
 if int(number)==A[0]:
     print("최근에 올라온 글이 없습니다.") #확인용-삭제
 else:
     print(A[0]-int(number),"개의 글이 올라왔습니다.") #확인용 -삭제
-    for i in range(A[0]-int(number)):
-        postnumber='bbs_tr_'+str(i)+'_bbs_title'
-        click1 = driver.find_element_by_id(postnumber) #게시글 조회
-        click1.click()
-        table2 = driver.find_element_by_id('cn')
-        postcontents.append(table2.text) #확인용 삭제
-        print(postcontents[i]) #확인용 - 삭제
-        if '확진' in table2.text:
-            f3=open("situ.txt",'w')
-            f3.write('확진') #수정필요
-            f3.close 
-        else:
-            print("확진없음") #확인용-삭제
-        click2=driver.find_element_by_class_name('list_btn')
-        click2.click()
-
+    if A[0]-int(number)<10:
+        for i in range(A[0]-int(number)):
+            postnumber='bbs_tr_'+str(i)+'_bbs_title'
+            click1 = driver.find_element_by_id(postnumber) #게시글 조회
+            click1.click()
+            table2 = driver.find_element_by_id('cn')
+            print(table2.text) #확인용 - 삭제
+            if '확진' in table2.text:
+                print("확진자발생")# server()
+            elif '지진' in table2.text:
+                print("지진발생")# server()
+            elif '태풍' in table2.text:
+                print("태풍대비")# server()
+            elif '산불' in table2.text:
+                print("산불발생")# server()
+            elif '공습' in table2.text:
+                print("공습경보발령")# server()
+            elif '전쟁' in table2.text:
+                print("공습경보발령")# server()
+            else:
+                pass
+            click2=driver.find_element_by_class_name('list_btn')
+            click2.click()
+    else:
+        print("최근 게시물 10개를 조회합니다." ) #확인용삭제
+        for i in range(10):
+            postnumber='bbs_tr_'+str(i)+'_bbs_title'
+            click1 = driver.find_element_by_id(postnumber) #게시글 조회
+            click1.click()
+            table2 = driver.find_element_by_id('cn')
+            print(table2.text) #확인용 - 삭제
+            if '확진' in table2.text:
+                print("확진자발생")# server()
+            elif '지진' in table2.text:
+                print("지진발생")# server()
+            elif '태풍' in table2.text:
+                print("태풍대비")# server()
+            elif '산불' in table2.text:
+                print("산불발생")# server()
+            elif '공습' in table2.text:
+                print("공습경보발령")# server()
+            elif '전쟁' in table2.text:
+                print("공습경보발령")# server()
+            else:
+                pass
+            click2=driver.find_element_by_class_name('list_btn')
+            click2.click()
 f2=open("number.txt",'w')
 f2.write(str(A[0]))
-f2.close 
+f2.close()
 # 가장 최근에 올라온 게시글의 번호 저장 및 게시글 저장
 
 driver.implicitly_wait(5) 
-
 driver.quit() 

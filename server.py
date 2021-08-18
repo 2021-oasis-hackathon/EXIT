@@ -20,8 +20,8 @@ def sendMessage(title,message,clickAction):
     print(result)
 f1=open("locate.txt",'r')
 title1=f1.readline()
-f1.close 
+f1.close()
 f2=open("situ.txt",'r')
 message1=f2.readline()
-f2.close 
+f2.close()
 sendMessage(title1,message1,"EmergencyMap") 

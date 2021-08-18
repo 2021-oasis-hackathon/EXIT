@@ -1,12 +1,14 @@
 import schedule
 import googlemaps
 import time
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup, BeautifulStoneSoup
 from selenium.webdriver.support.ui import Select
 from pyfcm import FCMNotification
-import time
 def server():
  
     APIKEY = "AAAAX1qnZgA:APA91bG7E7RRdVWZjPh7EEsDMtMeKub5Jparo9x0UUY-Tzug8Z0lMk201DFan70MjPxfbOi1cQWOUWbbEcFFYEL5CqKB5XwJd8EbVwnPEDRQnwzRcZmTmHC9ShIHTC-rKdNogG5dT8AA"
@@ -36,24 +38,25 @@ def server():
     sendMessage(title1,message1,"EmergencyMap") 
 
 def where():
+    cred = credentials.Certificate('exit-saferoute-8b9cb-firebase-adminsdk-ywwcq-2da185bbb8.json')
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://exit-saferoute-8b9cb-default-rtdb.firebaseio.com/'
+    })
+    lat=db.reference().child('lat').get() #위도
+    lng=db.reference().child('lng').get() #경도
     gmaps = googlemaps.Client(key='AIzaSyC3a8Nl31LCuwBbtXzzYazsz36MhTywyE4')
     reverse_geocode_result = gmaps.reverse_geocode(
-        (34.801402985089254, 126.6221388943585),language='ko'
-        ) # 수정필요
+        (lat,lng),language='ko'
+        ) 
     B=list(reverse_geocode_result[0].values())
     print(B[1]) #확인용 삭제
-    place=B[1].split() # B[1] - 풀네임
-    if '광역시' in place[1]:
-        locate=place[1]
-    else:
-        locate=place[2]
+    place=B[1].split() # B[1] - 풀네임 - 삭제 
+    locate=place[2]
+    print(place[1])#확인용
     f1=open("locate.txt",'w')
     f1.write(locate)
     f1.close()
     print(locate) # 확인용 - 삭제
-    #34.81481207887022, 126.424530487225 - 목포시
-    #34.801402985089254, 126.6221388943585 - 영암군
-    #35.16322415631088, 126.7543091789832 - 광주광역시
 
 def apppre():
     options = webdriver.ChromeOptions()
@@ -154,12 +157,18 @@ def app():
                 click1.click()
                 table2 = driver.find_element_by_id('cn')
                 print(table2.text) #확인용 - 삭제
-                if '확진' in table2.text:
-                    f3=open("situ.txt",'w')
-                    f3.write('확진') #수정필요
-                    f3.close()
+                if '지진' in table2.text:
+                    server()
+                elif '전쟁' in table2.text:
+                    server()
+                elif '호우' in table2.text:
+                    server()
+                elif '낙뢰' in table2.text:
+                    server()
+                elif '태풍' in table2.text:
+                    server()
                 else:
-                    print("확진없음") #확인용-삭제
+                    pass
                 click2=driver.find_element_by_class_name('list_btn')
                 click2.click()
         else:
@@ -170,20 +179,18 @@ def app():
                 click1.click()
                 table2 = driver.find_element_by_id('cn')
                 print(table2.text) #확인용 - 삭제
-                if '확진' in table2.text:
-                    server()
-                elif '지진' in table2.text:
-                    server()
-                elif '태풍' in table2.text:
-                    server()
-                elif '산불' in table2.text:
-                    server()
-                elif '공습' in table2.text:
+                if '지진' in table2.text:
                     server()
                 elif '전쟁' in table2.text:
                     server()
+                elif '호우' in table2.text:
+                    server()
+                elif '낙뢰' in table2.text:
+                    server()
+                elif '태풍' in table2.text:
+                    server()
                 else:
-                    print("확진없음") #확인용-삭제
+                    pass
                 click2=driver.find_element_by_class_name('list_btn')
                 click2.click()
     f2=open("number.txt",'w')
@@ -194,15 +201,6 @@ def app():
     driver.implicitly_wait(5) 
 
     driver.quit() 
-where() # 삭제
-print("1번째실행") # 삭제
-apppre() # 삭제
-print("2번째실행") # 삭제
-app() # 삭제
-print("3번째") # 삭제 
-#server() # 삭제
-print("4번째") # 삭제
-print("?%") # 삭제
 try:
     import crawl
 except:
