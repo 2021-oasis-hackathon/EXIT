@@ -141,7 +141,6 @@ def app():
         A.append(h)
     print(A[0]) #확인용 - 삭제
     A[0]=int(A[0])  # 가장 최근에 올라온 게시글의 번호
-    postcontents=[] # 게시글의 내용이 들어감 삭제
     print("텍스트에 저장된 숫자 number = ",number) #확인용 - 삭제
     print("가장 최근에 올라온 글의 번호 : ",A[0]) #확인용 - 삭제 
     if int(number)==A[0]:
@@ -154,12 +153,11 @@ def app():
                 click1 = driver.find_element_by_id(postnumber) #게시글 조회
                 click1.click()
                 table2 = driver.find_element_by_id('cn')
-                postcontents.append(table2.text) #확인용 삭제
-                print(postcontents[i]) #확인용 - 삭제
+                print(table2.text) #확인용 - 삭제
                 if '확진' in table2.text:
                     f3=open("situ.txt",'w')
                     f3.write('확진') #수정필요
-                    f3.close 
+                    f3.close()
                 else:
                     print("확진없음") #확인용-삭제
                 click2=driver.find_element_by_class_name('list_btn')
@@ -171,8 +169,7 @@ def app():
                 click1 = driver.find_element_by_id(postnumber) #게시글 조회
                 click1.click()
                 table2 = driver.find_element_by_id('cn')
-                postcontents.append(table2.text) #확인용 삭제
-                print(postcontents[i]) #확인용 - 삭제
+                print(table2.text) #확인용 - 삭제
                 if '확진' in table2.text:
                     server()
                 elif '지진' in table2.text:
@@ -206,7 +203,13 @@ print("3번째") # 삭제
 #server() # 삭제
 print("4번째") # 삭제
 print("?%") # 삭제
-
+try:
+    import crawl
+except:
+    pass
+where()
+apppre()
+app()
 schedule.every(30).minutes.do(where)
 schedule.every(30).minutes.do(apppre)
 schedule.every(5).minutes.do(app)
