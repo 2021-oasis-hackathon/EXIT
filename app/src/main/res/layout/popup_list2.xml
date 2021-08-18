@@ -10,42 +10,40 @@
         android:orientation="vertical">
 
         <TextView
-            android:background="@drawable/edge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:background="@drawable/edge"
             android:gravity="center"
             android:text="행정 구역"
-            android:textStyle="bold"
             android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/gjbtn"
-            android:text="광주광역시"
-            android:layout_gravity="center"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/jnbtn"
-            android:text="전라남도"
-            android:layout_gravity="center"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/jbbtn"
-            android:text="전라북도"
-            android:layout_gravity="center"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/gjbtn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:src="@drawable/gwangju_icon" />
 
-        <Button
-            android:id="@+id/notiBtn"
-            android:text="알림"
-            android:layout_gravity="center"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/jnbtn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:src="@drawable/jeonnam_icon" />
 
-
+            <ImageView
+                android:id="@+id/jbbtn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:src="@drawable/jeonbuk_icon" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
