@@ -1,13 +1,40 @@
 import schedule
 import googlemaps
 import time
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup, BeautifulStoneSoup
 from selenium.webdriver.support.ui import Select
 from pyfcm import FCMNotification
-import time
-
+def server():
+    APIKEY = "AAAAX1qnZgA:APA91bG7E7RRdVWZjPh7EEsDMtMeKub5Jparo9x0UUY-Tzug8Z0lMk201DFan70MjPxfbOi1cQWOUWbbEcFFYEL5CqKB5XwJd8EbVwnPEDRQnwzRcZmTmHC9ShIHTC-rKdNogG5dT8AA"
+    TOKEN = "e1PxtLrCS7q3UQ73O7Pdyg:APA91bGV_LlNDVBE3tQvYpB2w3WjibpDO15DsaPjENc_3_snJ5PlQDytNriNbNGdbNxHNKYMF8IzgYWFujiI_QP6Pg2qyzTlL8oVp_2OtMqlz3gSsP5vYwXl2-RvYPh_s3FeW6YFPpMl"
+    
+    # 파이어베이스 콘솔에서 얻어 온 서버 키를 넣어 줌
+    push_service = FCMNotification(APIKEY)
+    
+    def sendMessage(title,message,clickAction):
+        # 메시지 (data 타입)
+        data_message = {
+            "title": title,
+            "message": message,
+            "clickAction":clickAction
+        }
+        # 토큰값을 이용해 1명에게 푸시알림을 전송함
+        result = push_service.single_device_data_message(registration_id=TOKEN, data_message=data_message)
+    
+        # 전송 결과 출력
+        print(result) #확인용 삭제
+    f1=open("locate.txt",'r')
+    title1=f1.readline()
+    f1.close()
+    f2=open("situ.txt",'r')
+    message1=f2.readline()
+    f2.close()
+    sendMessage(title1,message1,"EmergencyMap") 
 options = webdriver.ChromeOptions()
 options.add_argument("--incognito")
 options.add_argument("--window-size=1920x1080")
@@ -45,11 +72,15 @@ A=[] #가장 최근에 올라온 행 적는것.
 for index, value in enumerate(body):
     h=value.text
     A.append(h)
+print(A[0]) #확인용 - 삭제
 A[0]=int(A[0])  # 가장 최근에 올라온 게시글의 번호
+print("텍스트에 저장된 숫자 number = ",number) #확인용 - 삭제
+print("가장 최근에 올라온 글의 번호 : ",A[0]) #확인용 - 삭제 
 if int(number)==A[0]:
     print("최근에 올라온 글이 없습니다.") #확인용-삭제
 else:
     print(A[0]-int(number),"개의 글이 올라왔습니다.") #확인용 -삭제
+    h=0
     if A[0]-int(number)<10:
         for i in range(A[0]-int(number)):
             postnumber='bbs_tr_'+str(i)+'_bbs_title'
@@ -57,22 +88,23 @@ else:
             click1.click()
             table2 = driver.find_element_by_id('cn')
             print(table2.text) #확인용 - 삭제
-            if '확진' in table2.text:
-                print("확진자발생")# server()
-            elif '지진' in table2.text:
-                print("지진발생")# server()
-            elif '태풍' in table2.text:
-                print("태풍대비")# server()
-            elif '산불' in table2.text:
-                print("산불발생")# server()
-            elif '공습' in table2.text:
-                print("공습경보발령")# server()
+            if '지진' in table2.text:
+                h=1
             elif '전쟁' in table2.text:
-                print("공습경보발령")# server()
+                h=1
+            elif '호우' in table2.text:
+                h=1
+            elif '낙뢰' in table2.text:
+                h=1
+            elif '태풍' in table2.text:
+                h=1
             else:
                 pass
             click2=driver.find_element_by_class_name('list_btn')
             click2.click()
+        if h==1:
+            server()
+            print("문자메세지를 발송하였습니다.")
     else:
         print("최근 게시물 10개를 조회합니다." ) #확인용삭제
         for i in range(10):
@@ -81,26 +113,27 @@ else:
             click1.click()
             table2 = driver.find_element_by_id('cn')
             print(table2.text) #확인용 - 삭제
-            if '확진' in table2.text:
-                print("확진자발생")# server()
-            elif '지진' in table2.text:
-                print("지진발생")# server()
-            elif '태풍' in table2.text:
-                print("태풍대비")# server()
-            elif '산불' in table2.text:
-                print("산불발생")# server()
-            elif '공습' in table2.text:
-                print("공습경보발령")# server()
+            if '지진' in table2.text:
+                h=1
             elif '전쟁' in table2.text:
-                print("공습경보발령")# server()
+                h=1
+            elif '호우' in table2.text:
+                h=1
+            elif '낙뢰' in table2.text:
+                h=1
+            elif '태풍' in table2.text:
+                h=1
             else:
                 pass
             click2=driver.find_element_by_class_name('list_btn')
             click2.click()
+        if h==1:
+            server()
 f2=open("number.txt",'w')
 f2.write(str(A[0]))
 f2.close()
 # 가장 최근에 올라온 게시글의 번호 저장 및 게시글 저장
 
 driver.implicitly_wait(5) 
+
 driver.quit() 

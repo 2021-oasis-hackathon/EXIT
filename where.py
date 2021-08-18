@@ -18,8 +18,8 @@ place=B[1].split() # B[1] - 풀네임 - 삭제
 locate=place[2]
 print(place[1])#확인용
 f1=open("locate.txt",'w')
-f1.write(locate)
-f1.close
+f1.write(locate) 
+f1.close()
 print(locate) # 확인용 - 삭제
 #34.81481207887022, 126.424530487225 - 목포시
 #34.801402985089254, 126.6221388943585 - 영암군

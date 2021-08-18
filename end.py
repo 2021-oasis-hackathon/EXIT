@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup, BeautifulStoneSoup
 from selenium.webdriver.support.ui import Select
 from pyfcm import FCMNotification
 def server():
- 
     APIKEY = "AAAAX1qnZgA:APA91bG7E7RRdVWZjPh7EEsDMtMeKub5Jparo9x0UUY-Tzug8Z0lMk201DFan70MjPxfbOi1cQWOUWbbEcFFYEL5CqKB5XwJd8EbVwnPEDRQnwzRcZmTmHC9ShIHTC-rKdNogG5dT8AA"
     TOKEN = "e1PxtLrCS7q3UQ73O7Pdyg:APA91bGV_LlNDVBE3tQvYpB2w3WjibpDO15DsaPjENc_3_snJ5PlQDytNriNbNGdbNxHNKYMF8IzgYWFujiI_QP6Pg2qyzTlL8oVp_2OtMqlz3gSsP5vYwXl2-RvYPh_s3FeW6YFPpMl"
     
@@ -158,14 +157,29 @@ def app():
                 table2 = driver.find_element_by_id('cn')
                 print(table2.text) #확인용 - 삭제
                 if '지진' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("지진상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '전쟁' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("전쟁상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '호우' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("호우상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '낙뢰' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("낙뢰상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '태풍' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("태풍상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 else:
                     pass
@@ -180,14 +194,29 @@ def app():
                 table2 = driver.find_element_by_id('cn')
                 print(table2.text) #확인용 - 삭제
                 if '지진' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("지진상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '전쟁' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("전쟁상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '호우' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("호우상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '낙뢰' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("낙뢰상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 elif '태풍' in table2.text:
+                    f3=open("situ.txt",'w')
+                    f3.write("태풍상황이니 대피장소를 확인하세요")
+                    f3.close()
                     server()
                 else:
                     pass
@@ -202,7 +231,7 @@ def app():
 
     driver.quit() 
 try:
-    import crawl
+   import crawl
 except:
     pass
 where()
