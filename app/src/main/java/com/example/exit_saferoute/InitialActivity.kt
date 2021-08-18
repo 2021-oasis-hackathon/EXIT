@@ -14,11 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.material.tabs.TabLayout
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -28,11 +24,14 @@ import kotlinx.android.synthetic.main.activity_initial.jbbtn
 import kotlinx.android.synthetic.main.activity_initial.jnbtn
 import kotlinx.android.synthetic.main.item.*
 import kotlinx.android.synthetic.main.popup_list2.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 
-class InitialActivity : AppCompatActivity(){
-    val TAG = "testTag"
+class InitialActivity : AppCompatActivity() {
     var getLatitude = 0.0
     var getLongitude = 0.0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,12 +39,19 @@ class InitialActivity : AppCompatActivity(){
         setContentView(R.layout.activity_initial)
         Toast.makeText(baseContext, "사용 시 위치정보기능을 켜주세요!", Toast.LENGTH_LONG).show()
         val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        val database = Firebase.database
+        val geocoder = Geocoder(this@InitialActivity, Locale.KOREAN)
+        val latRef = database.getReference("lat")
+        val lngRef = database.getReference("lng")
+        val tokenRef = database.getReference("token")
         val gpsLocationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 val provider: String = location.provider
                 val longitude: Double = location.longitude
                 val latitude: Double = location.latitude
                 val altitude: Double = location.altitude
+
             }
 
             //아래 3개함수는 형식상 필수부분
@@ -53,54 +59,96 @@ class InitialActivity : AppCompatActivity(){
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
         }
-//        if (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//            && ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            //권한이 없을 경우 최초 권한 요청 또는 사용자에 의한 재요청 확인
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                    this,
-//                    Manifest.permission.ACCESS_FINE_LOCATION
-//                ) &&
-//                ActivityCompat.shouldShowRequestPermissionRationale(
-//                    this,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION
-//                )
-//            ) {
-//                // 권한 재요청
-//                ActivityCompat.requestPermissions(
-//                    this,
-//                    arrayOf(
-//                        Manifest.permission.ACCESS_FINE_LOCATION,
-//                        Manifest.permission.ACCESS_COARSE_LOCATION
-//                    ),
-//                    100
-//                )
-//                return
-//            } else {
-//                ActivityCompat.requestPermissions(
-//                    this,
-//                    arrayOf(
-//                        Manifest.permission.ACCESS_FINE_LOCATION,
-//                        Manifest.permission.ACCESS_COARSE_LOCATION
-//                    ),
-//                    100
-//                )
-//                return
-//            }
-//        }
+        val isGPSEnabled: Boolean = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled: Boolean =
+            lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
+        if (Build.VERSION.SDK_INT >= 23 &&
+            ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this@InitialActivity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                0
+            )
+        } else {
+            when {
+                isNetworkEnabled -> {
+                    lm.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER,
+                        1,
+                        1F,
+                        gpsLocationListener
+                    )
+                    val location =
+                        lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) //인터넷기반으로 위치를 찾음
+                    if (location != null) {
+                        getLongitude = location!!.longitude
+                        getLatitude = location!!.latitude
+                        //Log.d("testTag", ""+getLatitude+","+getLongitude)
+                        latRef.setValue(getLatitude)
+                        lngRef.setValue(getLongitude)
 
-        val database = Firebase.database
-        val geocoder = Geocoder(this@InitialActivity, Locale.KOREAN)
-        val latRef = database.getReference("lat")
-        val lngRef = database.getReference("lng")
-        val tokenRef = database.getReference("token")
+                    }
+                }
+                isGPSEnabled -> {
+                    lm.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        1,
+                        1F,
+                        gpsLocationListener
+                    )
+                    val location =
+                        lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) //GPS 기반으로 위치를 찾음
+                    if (location != null) {
+                        getLongitude = location?.longitude!!
+                        getLatitude = location.latitude
+                        //Log.d("testTag", ""+getLatitude+","+getLongitude)
+                        latRef.setValue(getLatitude)
+                        lngRef.setValue(getLongitude)
+                    }
+                }
+            }
+        }
+        lm.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            1000,
+            1F,
+            gpsLocationListener
+        )
+        lm.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            1000,
+            1F,
+            gpsLocationListener
+        )
+        CoroutineScope(Dispatchers.IO).launch {
+            while(true){
+                lm.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    1000,
+                    1F,
+                    gpsLocationListener
+                )
+                lm.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    1000,
+                    1F,
+                    gpsLocationListener
+                )
+                val location =
+                    lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) //인터넷기반으로 위치를 찾음
+                if (location != null) {
+                    getLongitude = location!!.longitude
+                    getLatitude = location!!.latitude
+                    //Log.d("testTag", ""+getLatitude+","+getLongitude)
+                    latRef.setValue(getLatitude)
+                    lngRef.setValue(getLongitude)}
+            }
+        }
 // 디바이스 토큰 값 확인
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -201,10 +249,12 @@ class InitialActivity : AppCompatActivity(){
                 .show()
         }
         jbbtn.setOnClickListener {
-//            bundle.putString("hn", "3")
-//            val dialog = popup_list1()
-//            dialog.arguments = bundle
-//            dialog.show(supportFragmentManager, "test")
+            /** dialog 연습 부분
+            //            bundle.putString("hn", "3")
+            //            val dialog = popup_list1()
+            //            dialog.arguments = bundle
+            //            dialog.show(supportFragmentManager, "test")
+             **/
             AlertDialog.Builder(this)
                 .setTitle("세부 구역")
                 .setSingleChoiceItems(
@@ -226,8 +276,9 @@ class InitialActivity : AppCompatActivity(){
 
         button1.setOnClickListener {
             val isGPSEnabled: Boolean = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            val isNetworkEnabled: Boolean = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-            //매니페스트에 권한이 추가되어 있다해도 여기서 다시 한번 확인해야함
+            val isNetworkEnabled: Boolean =
+                lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
             if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(
                     applicationContext,
@@ -240,23 +291,24 @@ class InitialActivity : AppCompatActivity(){
                     0
                 )
             } else {
-                when { //프로바이더 제공자 활성화 여부 체크
+                when {
                     isNetworkEnabled -> {
-                        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                            100,
+                        lm.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            1,
                             1F,
-                            gpsLocationListener)
+                            gpsLocationListener
+                        )
                         val location =
                             lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) //인터넷기반으로 위치를 찾음
-                        if(location != null) {
+                        if (location != null) {
                             getLongitude = location!!.longitude
                             getLatitude = location!!.latitude
-                            lm.removeUpdates(gpsLocationListener)
                             //Log.d("testTag", ""+getLatitude+","+getLongitude)
                             latRef.setValue(getLatitude)
                             lngRef.setValue(getLongitude)
-                            val result = geocoder.getFromLocation(getLatitude,getLongitude,1)
-                            Log.d("testTag",""+result.get(0).getAddressLine(0).split(" ")[2])
+                            val result = geocoder.getFromLocation(getLatitude, getLongitude, 1)
+                            Log.d("testTag", "" + result.get(0).getAddressLine(0).split(" ")[2])
                             val addressResult = result.get(0).getAddressLine(0).split(" ")[2]
 
                             val itnt = Intent(this@InitialActivity, EmergencyMap::class.java)
@@ -265,21 +317,22 @@ class InitialActivity : AppCompatActivity(){
                         }
                     }
                     isGPSEnabled -> {
-                        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                            100,
+                        lm.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            1,
                             1F,
-                            gpsLocationListener)
+                            gpsLocationListener
+                        )
                         val location =
                             lm.getLastKnownLocation(LocationManager.GPS_PROVIDER) //GPS 기반으로 위치를 찾음
-                        if(location != null) {
+                        if (location != null) {
                             getLongitude = location?.longitude!!
                             getLatitude = location.latitude
-                            lm.removeUpdates(gpsLocationListener)
                             //Log.d("testTag", ""+getLatitude+","+getLongitude)
                             latRef.setValue(getLatitude)
                             lngRef.setValue(getLongitude)
-                            val result = geocoder.getFromLocation(getLatitude,getLongitude,1)
-                            Log.d("testTag",""+result.get(0).getAddressLine(0).split(" ")[2])
+                            val result = geocoder.getFromLocation(getLatitude, getLongitude, 1)
+                            Log.d("testTag", "" + result.get(0).getAddressLine(0).split(" ")[2])
                             val addressResult = result.get(0).getAddressLine(0).split(" ")[2]
 
                             val itnt = Intent(this@InitialActivity, EmergencyMap::class.java)
@@ -293,5 +346,8 @@ class InitialActivity : AppCompatActivity(){
 
         }
     }
-
 }
+
+
+
+
